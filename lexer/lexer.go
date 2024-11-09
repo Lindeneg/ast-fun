@@ -57,9 +57,17 @@ func (l *Lexer) NextToken() token.Token {
 	case '*':
 		tok = newToken(token.ASTERISK, l.char)
 	case '<':
-		tok = newToken(token.LT, l.char)
+		if l.peekChar() == '=' {
+			tok = tokenWithNext(l, token.LT_OR_EQ)
+		} else {
+			tok = newToken(token.LT, l.char)
+		}
 	case '>':
-		tok = newToken(token.GT, l.char)
+		if l.peekChar() == '=' {
+			tok = tokenWithNext(l, token.GT_OR_EQ)
+		} else {
+			tok = newToken(token.GT, l.char)
+		}
 	case '{':
 		tok = newToken(token.LBRACE, l.char)
 	case '}':

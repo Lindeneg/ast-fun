@@ -198,6 +198,7 @@ func TestParsingInfixExpressions(t *testing.T) {
 		{"5 / 5;", 5, "/", 5},
 		{"5 > 5;", 5, ">", 5},
 		{"5 < 5;", 5, "<", 5},
+		{"5 <= 5;", 5, "<=", 5},
 		{"5 == 5;", 5, "==", 5},
 		{"5 != 5;", 5, "!=", 5},
 		{"foobar + barfoo;", "foobar", "+", "barfoo"},

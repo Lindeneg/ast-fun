@@ -26,11 +26,15 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 
+	// TODO add LT_OR_EQ and GT_OR_EQUAL
 	LT = "<"
 	GT = ">"
 
 	EQ     = "=="
 	NOT_EQ = "!="
+
+	LT_OR_EQ = "<="
+	GT_OR_EQ = ">="
 
 	// Delimiters
 	COMMA     = ","
