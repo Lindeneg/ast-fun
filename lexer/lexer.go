@@ -5,10 +5,13 @@ import (
 )
 
 type Lexer struct {
-	input   string
+	input string
+	// current index
 	current int
-	next    int
-	char    byte
+	// next index
+	next int
+	// current char
+	char byte
 }
 
 // Creates a new lexer and reads the
