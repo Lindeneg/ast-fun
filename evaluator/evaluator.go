@@ -220,6 +220,9 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 	case NULL:
 		return TRUE // TODO null is truthy?
 	default:
+		if n, ok := right.(*object.Integer); ok && n.Value == 0 {
+			return TRUE
+		}
 		return FALSE
 	}
 }
@@ -255,6 +258,9 @@ func isTruthy(obj object.Object) bool {
 	case FALSE:
 		return false
 	default:
+		if n, ok := obj.(*object.Integer); ok && n.Value == 0 {
+			return false
+		}
 		return true
 	}
 }
