@@ -26,6 +26,20 @@ func Eval(n ast.Node, e *object.Environment) object.Object {
 			return val
 		}
 		e.Set(node.Name.Value, val)
+	case *ast.CallExpression:
+		function := Eval(node.Function, e)
+		if isError(function) {
+			return function
+		}
+		args := evalExpressions(node.Arguments, e)
+		if len(args) == 1 && isError(args[0]) {
+			return args[0]
+		}
+		return applyFunction(function, args)
+	case *ast.FunctionLiteral:
+		params := node.Parameters
+		body := node.Body
+		return &object.Function{Parameters: params, Env: e, Body: body}
 	case *ast.IfExpression:
 		return evalIfExpression(node, e)
 	case *ast.ReturnStatement:
@@ -90,12 +104,49 @@ func evalBlockStatement(stms []ast.Statement, e *object.Environment) object.Obje
 	return result
 }
 
+func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Object {
+	var result []object.Object
+	for _, e := range exps {
+		evaled := Eval(e, env)
+		if isError(evaled) {
+			return []object.Object{evaled}
+		}
+		result = append(result, evaled)
+	}
+	return result
+}
+
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
 	val, ok := env.Get(node.Value)
 	if !ok {
 		return newError("identifier not found: " + node.Value)
 	}
 	return val
+}
+
+func applyFunction(fn object.Object, args []object.Object) object.Object {
+	function, ok := fn.(*object.Function)
+	if !ok {
+		return newError("not a function: %s", fn.Type())
+	}
+	extendEnv := extendFunctionEnv(function, args)
+	evaled := Eval(function.Body, extendEnv)
+	return unwrapReturnValue(evaled)
+}
+
+func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Environment {
+	env := object.NewEnclosedEnvironment(fn.Env)
+	for i, p := range fn.Parameters {
+		env.Set(p.Value, args[i])
+	}
+	return env
+}
+
+func unwrapReturnValue(evaled object.Object) object.Object {
+	if returnValue, ok := evaled.(*object.ReturnValue); ok {
+		return returnValue.Value
+	}
+	return evaled
 }
 
 func nativeBoolToBooleanObject(input bool) *object.Boolean {
