@@ -5,14 +5,27 @@ import "fmt"
 type ObjectType string
 
 const (
-	NULL_OBJ    ObjectType = "NULL"
-	INTEGER_OBJ ObjectType = "INTEGER"
-	BOOLEAN_OBJ ObjectType = "BOOLEAN"
+	NULL_OBJ         ObjectType = "NULL"
+	ERROR_OBJ        ObjectType = "ERROR"
+	INTEGER_OBJ      ObjectType = "INTEGER"
+	BOOLEAN_OBJ      ObjectType = "BOOLEAN"
+	RETURN_VALUE_OBJ ObjectType = "RETURN_VALUE"
 )
 
 type Object interface {
 	Type() ObjectType
 	Inspect() string
+}
+
+type Error struct {
+	Message string
+}
+
+func (e *Error) Inspect() string {
+	return "ERROR: " + e.Message
+}
+func (e *Error) Type() ObjectType {
+	return ERROR_OBJ
 }
 
 type Integer struct {
@@ -22,7 +35,6 @@ type Integer struct {
 func (i *Integer) Inspect() string {
 	return fmt.Sprintf("%d", i.Value)
 }
-
 func (i *Integer) Type() ObjectType {
 	return INTEGER_OBJ
 }
@@ -38,6 +50,13 @@ func (b *Boolean) Inspect() string {
 func (b *Boolean) Type() ObjectType {
 	return BOOLEAN_OBJ
 }
+
+type ReturnValue struct {
+	Value Object
+}
+
+func (rv *ReturnValue) Inspect() string  { return rv.Value.Inspect() }
+func (rv *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
 
 type Null struct{}
 
