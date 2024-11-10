@@ -12,6 +12,11 @@ type Node interface {
 	String() string
 }
 
+// Methods statementNode and expressionNode are not strictly necessary
+// but help us by guiding the Go compiler and possibly causing it to
+// throw errors when we use a Statement where an Expression
+// should’ve been used, and vice versa.
+
 type Statement interface {
 	Node
 	statementNode()
