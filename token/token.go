@@ -26,7 +26,6 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 
-	// TODO add LT_OR_EQ and GT_OR_EQUAL
 	LT = "<"
 	GT = ">"
 
