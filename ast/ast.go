@@ -61,11 +61,20 @@ func (p *Program) String() string {
 	return out.String()
 }
 
+type StringLiteral struct {
+	Token token.Token
+	Value string
+}
+
 type LetStatement struct {
 	Token token.Token
 	Name  *Identifier
 	Value Expression
 }
+
+func (sl *StringLiteral) expressionNode()      {}
+func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
+func (sl *StringLiteral) String() string       { return sl.Token.Literal }
 
 func (ls *LetStatement) statementNode()       {}
 func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
