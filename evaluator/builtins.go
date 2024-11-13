@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/lindeneg/monkey/object"
 )
@@ -24,21 +25,22 @@ var builtins = map[string]*object.Builtin{
 	},
 	"println": {
 		Fn: func(args ...object.Object) object.Object {
-			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1",
-					len(args))
+			var sb strings.Builder
+			for _, a := range args {
+				switch arg := a.(type) {
+				case *object.String:
+					sb.WriteString(arg.Value)
+				case *object.Integer:
+					sb.WriteString(fmt.Sprintf("%d", arg.Value))
+				default:
+					return newError("argument to `println` not supported, got %s",
+						args[0].Type())
+				}
 			}
-			switch arg := args[0].(type) {
-			case *object.String:
-				fmt.Println(arg.Value)
-				return nil
-			case *object.Integer:
-				fmt.Printf("%d\n", arg.Value)
-				return nil
-			default:
-				return newError("argument to `len` not supported, got %s",
-					args[0].Type())
+			if sb.Len() > 0 {
+				fmt.Println(sb.String())
 			}
+			return nil
 		},
 	},
 }
