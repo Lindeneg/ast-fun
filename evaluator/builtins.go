@@ -38,6 +38,7 @@ var builtins = map[string]*object.Builtin{
 				}
 			}
 			if sb.Len() > 0 {
+				// TODO: perhaps have Writer in environment
 				fmt.Println(sb.String())
 			}
 			return nil

@@ -14,7 +14,6 @@ println(name);
 
 let x = 10;
 let y = 20;
-let c = x + y;
 
-println(x, "+", y, "=", c);
+println(x, "+", y, "=", x + y);
 
