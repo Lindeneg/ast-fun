@@ -62,7 +62,6 @@ func (l *Lexer) NextToken() token.Token {
 	case '/':
 		if l.peekChar() == '/' {
 			l.ignoreComment()
-			l.readChar()
 			return l.NextToken()
 		} else {
 			tok = newToken(token.SLASH, l.char)
@@ -118,7 +117,7 @@ func (l *Lexer) readString() string {
 }
 
 func (l *Lexer) ignoreComment() {
-	for l.char != 0 || l.char == '\n' {
+	for l.char != 0 && l.char != '\n' {
 		l.readChar()
 	}
 }
