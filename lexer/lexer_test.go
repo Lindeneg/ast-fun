@@ -148,3 +148,17 @@ if (5 < 10) {
 		}
 	}
 }
+
+func TestEmptyLexer(t *testing.T) {
+	input := "// comment"
+	l := NewLexer(input)
+	tok := l.NextToken()
+	if tok.Type != token.EOF {
+		t.Fatalf("tokentype wrong. expected=%q, got=%q",
+			token.EOF, tok.Type)
+	}
+	if tok.Literal != "" {
+		t.Fatalf("literal wrong. expected=%q, got=%q",
+			"", tok.Literal)
+	}
+}

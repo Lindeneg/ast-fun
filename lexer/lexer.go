@@ -62,6 +62,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '/':
 		if l.peekChar() == '/' {
 			l.ignoreComment()
+			l.readChar()
 			return l.NextToken()
 		} else {
 			tok = newToken(token.SLASH, l.char)
@@ -117,9 +118,9 @@ func (l *Lexer) readString() string {
 }
 
 func (l *Lexer) ignoreComment() {
-	readUntil(l, func(char byte) bool {
-		return l.char == 0 || char != '\n'
-	})
+	for l.char != 0 || l.char == '\n' {
+		l.readChar()
+	}
 }
 
 // read without incrementing the next position

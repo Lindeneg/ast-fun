@@ -61,6 +61,17 @@ func TestParsingArrayLiterals(t *testing.T) {
 	testInfixExpression(t, array.Elements[2], 3, "+", 3)
 }
 
+func TestParsingCommentLiteral(t *testing.T) {
+	input := "// whateverworks hello there"
+	l := lexer.NewLexer(input)
+	p := New(l)
+	program := p.ParseProgram()
+	if len(program.Statements) > 0 {
+		t.Fatalf("expected empty program, got %d statements", len(program.Statements))
+	}
+	checkParserErrors(t, p)
+}
+
 func TestReturnStatements(t *testing.T) {
 	tests := []struct {
 		input         string
