@@ -28,6 +28,8 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 
+	COLON = ":"
+
 	LT = "<"
 	GT = ">"
 

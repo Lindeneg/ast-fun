@@ -395,7 +395,25 @@ func TestFunctionApplication(t *testing.T) {
 		{"fn(x) { x; }(5)", 5},
 	}
 	for _, tt := range tests {
-		testIntegerObject(t, testEval(tt.input), tt.expected)
+		e := testEval(tt.input)
+		testIntegerObject(t, e, tt.expected)
+	}
+}
+
+func TestFunctionIncorrectArgs(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"fn(x) { x; }()", "ERROR: fn takes 1 args but 0 was passed"},
+		{"fn(x, y, z) { x; }(1, 2)", "ERROR: fn takes 3 args but 2 was passed"},
+		{"fn(x, y, z) { x; }(1, 2, 3, 4)", "ERROR: fn takes 3 args but 4 was passed"},
+	}
+	for _, tt := range tests {
+		e := testEval(tt.input)
+		if e.Inspect() != tt.expected {
+			t.Fatalf("expected error, want=%q, got=%q", tt.expected, e.Inspect())
+		}
 	}
 }
 

@@ -34,6 +34,7 @@ if (5 < 10) {
 "foo 0 bar"
 [1, 2];
 // this is a single line comment
+{"foo": "bar"}
 `
 	tests := []struct {
 		expectedType    token.TokenType
@@ -129,6 +130,11 @@ if (5 < 10) {
 		{token.INT, "2"},
 		{token.RBRACKET, "]"},
 		{token.SEMICOLON, ";"},
+		{token.LBRACE, "{"},
+		{token.STRING, "foo"},
+		{token.COLON, ":"},
+		{token.STRING, "bar"},
+		{token.RBRACE, "}"},
 		{token.EOF, ""},
 	}
 
