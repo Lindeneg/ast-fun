@@ -34,7 +34,7 @@ var builtins = map[string]*object.Builtin{
 			if sb.Len() > 0 {
 				fmt.Println(sb.String())
 			}
-			return nil
+			return NULL
 		},
 	},
 	"first": {
