@@ -22,11 +22,17 @@ let reduce = fn(arr, initial, f) {
     return iter(arr, initial);
 }
 
+let lib = {
+    "map": map,
+    "reduce": reduce
+};
+
 // TEST
 
 let x = [1, 2, 3, 4];
 println(x);
-let xx = map(x, fn(x) { return x * 2; });
+let xx = lib["map"](x, fn(x) { return x * 2; });
 println(xx);
-let xx = reduce(x, 0, fn(acc, n) { return acc + n; });
+let xx = lib["reduce"](x, 0, fn(acc, n) { return acc + n; });
 println(xx);
+

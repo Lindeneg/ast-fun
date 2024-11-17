@@ -13,6 +13,14 @@ import (
 	"github.com/lindeneg/monkey/repl"
 )
 
+// Implement new behavior:
+// - Define TOKEN
+// - Use it in Lexical Analysis
+// - Built it into an AST
+// - Parse the token into AST
+// - Create a related object type
+// - Use the new object type in evaluation
+
 func main() {
 	if len(os.Args) > 1 {
 		data, err := os.ReadFile(os.Args[1])

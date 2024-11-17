@@ -3,6 +3,7 @@ package object
 import (
 	"bytes"
 	"fmt"
+	"hash/fnv"
 	"strings"
 
 	"github.com/lindeneg/monkey/ast"
@@ -20,6 +21,7 @@ const (
 	STRING_OBJ       ObjectType = "STRING"
 	BUILTIN_OBJ      ObjectType = "BUILTIN"
 	ARRAY_OBJ        ObjectType = "ARRAY"
+	HASH_OBJ         ObjectType = "HASH"
 )
 
 type Object interface {
@@ -27,8 +29,22 @@ type Object interface {
 	Inspect() string
 }
 
+type Hashable interface {
+	HashKey() HashKey
+}
+
 type Error struct {
 	Message string
+}
+
+// TODO HASH COLLISIONS
+// Chances that we experience it are low, but it
+// should be noted that there are well-known techniques such as “separate chaining” and “open
+// addressing” to work around the problem. Investigate it.
+// ALSO think about caching calculated hashes.
+type HashKey struct {
+	Type  ObjectType
+	Value uint64
 }
 
 type BuiltinFn func(args ...Object) Object
@@ -45,6 +61,24 @@ func (e *Error) Inspect() string {
 }
 func (e *Error) Type() ObjectType {
 	return ERROR_OBJ
+}
+
+type Hash struct {
+	Pairs map[HashKey]HashPair
+}
+
+func (h *Hash) Type() ObjectType { return HASH_OBJ }
+func (h *Hash) Inspect() string {
+	var out bytes.Buffer
+	pairs := []string{}
+	for _, pair := range h.Pairs {
+		pairs = append(pairs, fmt.Sprintf("%s: %s",
+			pair.Key.Inspect(), pair.Value.Inspect()))
+	}
+	out.WriteString("{")
+	out.WriteString(strings.Join(pairs, ", "))
+	out.WriteString("}")
+	return out.String()
 }
 
 type Array struct {
@@ -87,12 +121,22 @@ func (f *Function) Inspect() string {
 	return out.String()
 }
 
+type HashPair struct {
+	Key   Object
+	Value Object
+}
+
 type String struct {
 	Value string
 }
 
 func (s *String) Type() ObjectType { return STRING_OBJ }
 func (s *String) Inspect() string  { return s.Value }
+func (s *String) HashKey() HashKey {
+	h := fnv.New64a()
+	h.Write([]byte(s.Value))
+	return HashKey{Type: s.Type(), Value: h.Sum64()}
+}
 
 type Integer struct {
 	Value int64
@@ -105,6 +149,10 @@ func (i *Integer) Type() ObjectType {
 	return INTEGER_OBJ
 }
 
+func (i *Integer) HashKey() HashKey {
+	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
+}
+
 type Boolean struct {
 	Value bool
 }
@@ -115,6 +163,16 @@ func (b *Boolean) Inspect() string {
 
 func (b *Boolean) Type() ObjectType {
 	return BOOLEAN_OBJ
+}
+
+func (b *Boolean) HashKey() HashKey {
+	var value uint64
+	if b.Value {
+		value = 1
+	} else {
+		value = 0
+	}
+	return HashKey{Type: b.Type(), Value: value}
 }
 
 type ReturnValue struct {
