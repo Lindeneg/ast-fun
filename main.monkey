@@ -1,26 +1,32 @@
-// check variable block-scopes
+// STDLIB
 
-// start by declaring two variables
-let first = "Foo";
-let last = "Bar";
-
-// make a function that takes
-// parameters with the same names
-let make_name = fn(first, last) {
-    return first + " " + last;
+let map = fn(arr, f) {
+    let iter = fn(arr, acc) {
+        if (len(arr) == 0) {
+            return acc;
+        } else {
+            return iter(rest(arr), push(acc, f(first(arr))));
+        }
+    };
+    return iter(arr, []);
 };
 
-let first_ = "Christian";
-let last_ = "Lindeneg";
+let reduce = fn(arr, initial, f) {
+    let iter = fn(arr, result) {
+        if (len(arr) == 0) {
+            return result;
+        } else {
+            iter(rest(arr), f(result, first(arr)));
+        }
+    };
+    return iter(arr, initial);
+}
 
-// should be Christian Lindeneg and not Foo Bar
-let name = make_name(first_, last_)
+// TEST
 
-// lets see if it worked
-println(name);
-
-let x = 10;
-let y = 20;
-
-println(x, "+", y, "=", x + y);
-
+let x = [1, 2, 3, 4];
+println(x);
+let xx = map(x, fn(x) { return x * 2; });
+println(xx);
+let xx = reduce(x, 0, fn(acc, n) { return acc + n; });
+println(xx);
